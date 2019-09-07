@@ -81,6 +81,11 @@ module tb #(parameter WORD_SIZE=`WORD_SIZE) ();
         @(negedge i_clk);
         i_we   = 0;
         #(34*CLK_P);
+        //Read
+        @(negedge i_clk);
+        i_addr = 4;
+        @(negedge i_clk);
+        data_out = o_data;
 
 
         $finish;
