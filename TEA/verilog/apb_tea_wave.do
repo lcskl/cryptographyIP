@@ -9,7 +9,6 @@ add wave -noupdate -expand -group TB -radix hexadecimal /tea_apb_wrapper_tb/PADD
 add wave -noupdate -expand -group TB -radix hexadecimal /tea_apb_wrapper_tb/PWRITE
 add wave -noupdate -expand -group TB -radix hexadecimal /tea_apb_wrapper_tb/PSEL
 add wave -noupdate -expand -group TB -radix hexadecimal /tea_apb_wrapper_tb/PENABLE
-add wave -noupdate -expand -group TB -radix hexadecimal /tea_apb_wrapper_tb/data_out
 add wave -noupdate -expand -group {INTERNAL REGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/current_state
 add wave -noupdate -expand -group {INTERNAL REGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/next_state
 add wave -noupdate -expand -group {INTERNAL REGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/count
@@ -22,7 +21,7 @@ add wave -noupdate -expand -group {INTERNAL REGS} -radix hexadecimal /tea_apb_wr
 add wave -noupdate -expand -group {INTERNAL REGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/v1
 add wave -noupdate -expand -group {INTERNAL REGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/sum_enc
 add wave -noupdate -expand -group {INTERNAL REGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/sum_dec
-add wave -noupdate -expand -group {INTERNAL REGS} -radix hexadecimal -childformat {{{/tea_apb_wrapper_tb/dut/TEA/mem_reg[0]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[1]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[2]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[3]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[4]} -radix hexadecimal}} -expand -subitemconfig {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[0]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[1]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[2]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[3]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[4]} {-height 16 -radix hexadecimal}} /tea_apb_wrapper_tb/dut/TEA/mem_reg
+add wave -noupdate -expand -group {INTERNAL REGS} -radix hexadecimal -childformat {{{/tea_apb_wrapper_tb/dut/TEA/mem_reg[0]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[1]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[2]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[3]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[4]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[5]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[6]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[7]} -radix hexadecimal} {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[8]} -radix hexadecimal}} -subitemconfig {{/tea_apb_wrapper_tb/dut/TEA/mem_reg[0]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[1]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[2]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[3]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[4]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[5]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[6]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[7]} {-height 16 -radix hexadecimal} {/tea_apb_wrapper_tb/dut/TEA/mem_reg[8]} {-height 16 -radix hexadecimal}} /tea_apb_wrapper_tb/dut/TEA/mem_reg
 add wave -noupdate -expand -group {INTERNAL SIGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/i_clk
 add wave -noupdate -expand -group {INTERNAL SIGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/i_rstn
 add wave -noupdate -expand -group {INTERNAL SIGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/o_data
@@ -30,8 +29,10 @@ add wave -noupdate -expand -group {INTERNAL SIGS} -radix hexadecimal /tea_apb_wr
 add wave -noupdate -expand -group {INTERNAL SIGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/i_data
 add wave -noupdate -expand -group {INTERNAL SIGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/i_addr
 add wave -noupdate -expand -group {INTERNAL SIGS} -radix hexadecimal /tea_apb_wrapper_tb/dut/TEA/i_we
+add wave -noupdate -radix hexadecimal /tea_apb_wrapper_tb/data_out_pt1
+add wave -noupdate -radix hexadecimal /tea_apb_wrapper_tb/data_out_pt2
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {70 ps} 0}
+WaveRestoreCursors {{Cursor 1} {34 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 204
 configure wave -valuecolwidth 149
@@ -47,4 +48,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ps} {95 ps}
+WaveRestoreZoom {2080 ps} {2175 ps}

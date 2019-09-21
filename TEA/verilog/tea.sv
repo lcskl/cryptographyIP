@@ -8,7 +8,7 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
     output logic [WORD_SIZE-1 :0] o_data,
     output logic o_ready,
     input  logic [WORD_SIZE-1 :0] i_data,
-    input  logic [2:0] i_addr,
+    input  logic [3:0] i_addr,
     input  logic i_we,
     input  logic i_clk,
     input  logic i_rstn
@@ -17,11 +17,16 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
     localparam DELTA = 'h9E3779B9;
 
     //Memory Register
-    // 0x00 - Data
-    // 0x01 - Key part 1
-    // 0x02 - Key part 2
-    // 0x03 - Control
-    // 0x04 - Result
+    // 0x00 - Data part 1
+    // 0x01 - Data part 2
+    // 0x02 - Key part 1
+    // 0x03 - Key part 2
+    // 0x04 - Key part 3
+    // 0x05 - Key part 4
+    // 0x06 - Control
+    // 0x07 - Result part 1
+    // 0x08 - Result part 2
+
     logic [WORD_SIZE-1:0] mem_reg [`MEM_DEPTH];
 
     //FSM
@@ -32,15 +37,15 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
     logic count_en;
 
     //Aux Signal/Registers
-    logic [(WORD_SIZE/4)-1:0] k0, k1, k2, k3; //Key
-    logic [(WORD_SIZE/2)-1:0] v0, v1; //Word
+    logic [WORD_SIZE-1:0] k0, k1, k2, k3; //Key
+    logic [WORD_SIZE-1:0] v0, v1; //Word
     logic [31:0] sum_enc, sum_dec;
 
 
-    assign k0 = mem_reg['h01][(WORD_SIZE/2)-1:0];
-    assign k1 = mem_reg['h01][(WORD_SIZE)-1:(WORD_SIZE/2)];
-    assign k2 = mem_reg['h02][(WORD_SIZE/2)-1:0];
-    assign k3 = mem_reg['h02][(WORD_SIZE)-1:(WORD_SIZE/2)];
+    assign k0 = mem_reg['h02];
+    assign k1 = mem_reg['h03];
+    assign k2 = mem_reg['h04];
+    assign k3 = mem_reg['h05];
 
 
     //Registers Access
@@ -52,7 +57,7 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
         end
         else begin
             if(i_we) begin
-                if(i_addr != 'h4) begin
+                if(i_addr != (`MEM_DEPTH-1) && i_addr != (`MEM_DEPTH-2)) begin //No result addr
                     mem_reg[i_addr] <= i_data;
                 end
             end
@@ -86,10 +91,10 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
                 count_en = 0;
                 sum_enc = 0;
                 sum_dec = 'hC6EF3720;
-                v0 = mem_reg['h0][(WORD_SIZE/2)-1:0];
-                v1 = mem_reg['h0][WORD_SIZE-1:(WORD_SIZE/2)];
+                v0 = mem_reg['h0];
+                v1 = mem_reg['h1];
 
-                case (mem_reg['h03])
+                case (mem_reg['h06])
                     `CTRL_ENC : next_state = `ENC;
                     `CTRL_DEC : next_state = `DEC;
                     default   : next_state = `IDLE;
@@ -119,8 +124,9 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
 
             `READY: begin 
                 o_ready = 1;
-                mem_reg['h4] = {v1, v0};
-                mem_reg['h3] = `CTRL_NONE;
+                mem_reg['h7] = v0;
+                mem_reg['h8] = v1;
+                mem_reg['h6] = `CTRL_NONE;
                 next_state = `IDLE;
             end
 

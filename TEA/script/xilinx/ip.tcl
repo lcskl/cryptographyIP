@@ -18,7 +18,6 @@ if ![file exists $projdir]  {file mkdir $projdir}
 
 # Create project
 create_project -force $projname $projdir -part $partnumber
-#set_property board_part digilentinc.com:basys3:part0:1.1 [current_project]
 
 # Add File
 set_property include_dirs $incdirs [current_fileset]; #Include Directories
@@ -26,6 +25,7 @@ set_property include_dirs $incdirs [current_fileset]; #Include Directories
 add_files -norecurse -scan_for_includes $rootdir/verilog/tea.svh
 add_files -norecurse -scan_for_includes $rootdir/verilog/tea.sv
 add_files -norecurse -scan_for_includes $rootdir/verilog/tea_apb_wrapper.sv
+#add_files -norecurse -scan_for_includes $rootdir/verilog/tea_xilinx_apb_wrapper.sv
 
 #Setting top
 set_property top tea_apb_wrapper [current_fileset]
