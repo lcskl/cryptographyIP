@@ -41,3 +41,5 @@ ipx::update_checksums [ipx::current_core]
 ipx::save_core [ipx::current_core]
 set_property  ip_repo_paths  $projdir [current_project]
 update_ip_catalog; #Is it necessary?
+
+exit
