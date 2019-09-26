@@ -1,5 +1,5 @@
 
-TOCLEAR={ vivado* , VIVADO_PROJECT , script/xilinx/vivado* , .Xil/ }
+TOCLEAR={ vivado* , VIVADO_PROJECT , script/xilinx/vivado*, script/xilinx/.Xil , .Xil/ }
 
 help:
 	@echo "make help  -  Display the help command list"
