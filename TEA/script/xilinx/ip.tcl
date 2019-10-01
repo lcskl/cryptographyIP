@@ -32,15 +32,13 @@ set_property top tea_apb_wrapper [current_fileset]
 #Compiler
 update_compile_order -fileset sources_1
 
+#Synthesis
+launch_runs synth_1 -jobs 4
+
 #Creating IP
 ipx::package_project -import_files { $rootdir/verilog/tea.svh $rootdir/verilog/tea.sv $rootdir/verilog/tea_apb_wrapper.sv } -root_dir $projdir -vendor SoinMicroelectronic.org -library soin_ip -taxonomy /SoinIP -generated_files
-#Creating Address Map
-#ipx::add_memory_map APB_S [ipx::current_core]
-#set_property slave_memory_map_ref TEA_APB_S [ipx::get_bus_interfaces APB_S -of_objects [ipx::current_core]]
-#ipx::add_address_block TEA_REG [ipx::get_memory_maps TEA_APB_S -of_objects [ipx::current_core]]
-#set_property range {16} [ipx::get_address_blocks APB_S -of_objects [ipx::get_memory_maps APB_S -of_objects [ipx::current_core]]]
 
-#ipx::add_bus_interface {APB_S} [ipx::current_core]
+#Creating Interface
 set_property abstraction_type_vlnv {xilinx.com:interface:apb_rtl:1.0} [ipx::get_bus_interface APB_S [ipx::current_core]]
 set_property bus_type_vlnv {xilinx.com:interface:apb:1.0} [ipx::get_bus_interface APB_S [ipx::current_core]]
 set_property interface_mode {slave} [ipx::get_bus_interface APB_S [ipx::current_core]]
@@ -59,11 +57,10 @@ set_property physical_name {PWRITE} [ipx::get_port_map PWRITE [ipx::get_bus_inte
 ipx::add_port_map {PWDATA} [ipx::get_bus_interface APB_S [ipx::current_core]]
 set_property physical_name {PWDATA} [ipx::get_port_map PWDATA [ipx::get_bus_interface APB_S [ipx::current_core]]]
 
-
+#Creating Address Map
 ipx::add_memory_map {APB_S} [ipx::current_core]
 set_property slave_memory_map_ref {APB_S} [ipx::get_bus_interface APB_S [ipx::current_core]]
 ipx::add_address_block {TEA_REG} [ipx::get_memory_map APB_S [ipx::current_core]]
-#To be implemented
 set_property range {16} [ipx::get_address_blocks TEA_REG -of_objects [ipx::get_memory_maps APB_S -of_objects [ipx::current_core]]]
 
 

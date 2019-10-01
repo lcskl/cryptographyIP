@@ -42,12 +42,6 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
     logic [31:0] sum_enc, sum_dec;
 
 
-    assign k0 = mem_reg['h02];
-    assign k1 = mem_reg['h03];
-    assign k2 = mem_reg['h04];
-    assign k3 = mem_reg['h05];
-
-
     //Registers Access
     always @(posedge i_clk or negedge i_rstn) begin
         if(~i_rstn) begin
@@ -63,6 +57,11 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
             end
             else begin
                 o_data <= mem_reg[i_addr];
+            end
+            if(next_state == `READY) begin // Is this a good practice?
+                mem_reg['h6] <= `CTRL_NONE;
+                mem_reg['h7] <= v0;
+                mem_reg['h8] <= v1;
             end
         end
     end
@@ -91,8 +90,13 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
                 count_en = 0;
                 sum_enc = 0;
                 sum_dec = 'hC6EF3720;
+                //Assign the values to the aux registers
                 v0 = mem_reg['h0];
                 v1 = mem_reg['h1];
+                k0 = mem_reg['h02];
+                k1 = mem_reg['h03];
+                k2 = mem_reg['h04];
+                k3 = mem_reg['h05];
 
                 case (mem_reg['h06])
                     `CTRL_ENC : next_state = `ENC;
@@ -124,9 +128,6 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
 
             `READY: begin 
                 o_ready = 1;
-                mem_reg['h7] = v0;
-                mem_reg['h8] = v1;
-                mem_reg['h6] = `CTRL_NONE;
                 next_state = `IDLE;
             end
 
