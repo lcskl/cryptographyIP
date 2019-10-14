@@ -57,6 +57,11 @@ set_property physical_name {PWRITE} [ipx::get_port_map PWRITE [ipx::get_bus_inte
 ipx::add_port_map {PWDATA} [ipx::get_bus_interface APB_S [ipx::current_core]]
 set_property physical_name {PWDATA} [ipx::get_port_map PWDATA [ipx::get_bus_interface APB_S [ipx::current_core]]]
 
+#Clock Reset
+ipx::infer_bus_interface PCLK xilinx.com:signal:clock_rtl:1.0 [ipx::current_core]
+ipx::infer_bus_interface PRESETn xilinx.com:signal:reset_rtl:1.0 [ipx::current_core]
+
+
 #Creating Address Map
 ipx::add_memory_map {APB_S} [ipx::current_core]
 set_property slave_memory_map_ref {APB_S} [ipx::get_bus_interface APB_S [ipx::current_core]]
