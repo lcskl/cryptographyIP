@@ -12,7 +12,7 @@ module tea_apb_wrapper  #(parameter WORD_SIZE=`WORD_SIZE) (
     (* X_INTERFACE_INFO = "xilinx.com:interface:apb:1.0 APB_S PENABLE" *)
     input                        PENABLE,
     (* X_INTERFACE_INFO = "xilinx.com:interface:apb:1.0 APB_S PADDR" *)
-    input  [            3:0]     PADDR,
+    input  [            6:0]     PADDR,
     (* X_INTERFACE_INFO = "xilinx.com:interface:apb:1.0 APB_S PWRITE" *)
     input                        PWRITE,
     //(* X_INTERFACE_INFO = "xilinx.com:interface:apb:1.0 APB_S PSTRB" *)
@@ -25,15 +25,17 @@ module tea_apb_wrapper  #(parameter WORD_SIZE=`WORD_SIZE) (
 
     //Aux Signals
     logic we; //Write Enable
+    logic [3:0] addr; //Address
 
     assign PSLVERR = 0;
     assign we = PSEL & PENABLE & PWRITE;
+    assign addr = PADDR >> 2;
 
     tea TEA (
         .o_data(PRDATA),
         .o_ready(PREADY),
         .i_data(PWDATA),
-        .i_addr(PADDR),
+        .i_addr(addr),
         .i_we(we),
         .i_rstn(PRESETn),
         .i_clk(PCLK)

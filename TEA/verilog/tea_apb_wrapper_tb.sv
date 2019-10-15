@@ -10,7 +10,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
     logic                   PCLK;
     logic                   PSEL;
     logic                   PENABLE;
-    logic [            3:0] PADDR;
+    logic [            6:0] PADDR;
     logic                   PWRITE;
     logic                   PSLVERR;
     //logic [WORD_SIZE/8-1:0] PSTRB; //TODO: Implement it if necessary
@@ -48,7 +48,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         PENABLE = 0;
         //Second Half
         @(negedge PCLK);
-        PADDR = 1;
+        PADDR = 4;
         PWDATA = 'hDEADBEAF;
         PSEL   = 1;
         PWRITE = 1;
@@ -60,7 +60,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         //Load Keys
         //k0
         @(negedge PCLK);
-        PADDR = 2;
+        PADDR = 8;
         PWDATA = 'h00000001;
         PSEL   = 1;
         PWRITE = 1;
@@ -70,7 +70,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         PENABLE = 0;
         //k1
         @(negedge PCLK);
-        PADDR = 3;
+        PADDR = 12;
         PWDATA = 'h00000002;
         PSEL   = 1;
         PWRITE = 1;
@@ -79,7 +79,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         @(posedge PCLK);
         PENABLE = 0;
         //k2
-        PADDR = 4;
+        PADDR = 16;
         PWDATA = 'h00000003;
         PSEL   = 1;
         PWRITE = 1;
@@ -88,7 +88,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         @(posedge PCLK);
         PENABLE = 0;
         //k3
-        PADDR = 5;
+        PADDR = 20;
         PWDATA = 'h00000004;
         PSEL   = 1;
         PWRITE = 1;
@@ -99,7 +99,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
 
         //Control
         @(negedge PCLK);
-        PADDR = 6;
+        PADDR = 24;
         PWDATA = 'h01;
         PSEL   = 1;
         PWRITE = 1;
@@ -112,7 +112,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         //Read
         //PT1
         @(negedge PCLK);
-        PADDR = 7;
+        PADDR = 28;
         PSEL   = 1;
         PWRITE = 0;
         @(posedge PCLK);
@@ -122,7 +122,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         data_out_pt1 = PRDATA;
         //PT2
         @(negedge PCLK);
-        PADDR = 8;
+        PADDR = 32;
         PSEL   = 1;
         PWRITE = 0;
         @(posedge PCLK);
@@ -151,7 +151,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         PENABLE = 0;
         //Second Half
         @(negedge PCLK);
-        PADDR = 1;
+        PADDR = 4;
         PWDATA = data_out_pt2;
         PSEL   = 1;
         PWRITE = 1;
@@ -163,7 +163,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         //Load Keys
         //k0
         @(negedge PCLK);
-        PADDR = 2;
+        PADDR = 8;
         PWDATA = 'h00000001;
         PSEL   = 1;
         PWRITE = 1;
@@ -173,7 +173,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         PENABLE = 0;
         //k1
         @(negedge PCLK);
-        PADDR = 3;
+        PADDR = 12;
         PWDATA = 'h00000002;
         PSEL   = 1;
         PWRITE = 1;
@@ -182,7 +182,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         @(posedge PCLK);
         PENABLE = 0;
         //k2
-        PADDR = 4;
+        PADDR = 16;
         PWDATA = 'h00000003;
         PSEL   = 1;
         PWRITE = 1;
@@ -191,7 +191,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         @(posedge PCLK);
         PENABLE = 0;
         //k3
-        PADDR = 5;
+        PADDR = 20;
         PWDATA = 'h00000004;
         PSEL   = 1;
         PWRITE = 1;
@@ -202,7 +202,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
 
         //Control
         @(negedge PCLK);
-        PADDR = 6;
+        PADDR = 24;
         PWDATA = 'h02;
         PSEL   = 1;
         PWRITE = 1;
@@ -215,7 +215,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         //Read
         //PT1
         @(negedge PCLK);
-        PADDR = 7;
+        PADDR = 28;
         PSEL   = 1;
         PWRITE = 0;
         @(posedge PCLK);
@@ -225,7 +225,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         data_out_pt1 = PRDATA;
         //PT2
         @(negedge PCLK);
-        PADDR = 8;
+        PADDR = 32;
         PSEL   = 1;
         PWRITE = 0;
         @(posedge PCLK);
