@@ -43,7 +43,7 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
 
 
     //Registers Access
-    always @(posedge i_clk or negedge i_rstn) begin
+    always @(posedge i_clk) begin
         if(~i_rstn) begin
             for (int i = 0; i < `MEM_DEPTH; i++) begin
                 mem_reg[i] <= 0;
@@ -67,7 +67,7 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
     end
 
     //Counter
-    always@ (posedge i_clk or negedge i_rstn) begin 
+    always@ (posedge i_clk) begin 
         if(~i_rstn) begin
             count <= 0;
         end
@@ -137,7 +137,7 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
     end
 
     //FSM - Sequential
-    always_ff @(posedge i_clk or negedge i_rstn) begin
+    always @(posedge i_clk) begin
         if(~i_rstn) begin
             current_state <= `IDLE;
         end else begin
