@@ -8,7 +8,9 @@
 `define CTRL_DEC  'b10
 
 //FSM States
-`define IDLE  'b00
-`define ENC   'b01
-`define DEC   'b10
-`define READY 'b11
+`define IDLE    'b000
+`define ENC_PT1 'b001
+`define ENC_PT2 'b010
+`define DEC_PT1 'b011
+`define DEC_PT2 'b100
+`define READY   'b101

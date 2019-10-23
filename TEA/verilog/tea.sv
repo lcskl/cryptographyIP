@@ -1,7 +1,7 @@
 //TODO:
-//  - Analyze the possibility to use the data register as result one
-//  - Analyze the performance of using a 5b count or a 4b count
-//  - Cleanup: Use sme register sum to encode and decode
+//  - Clean Up
+//  - Solve decode issue
+
 `include "tea.svh"
 
 module tea #(parameter WORD_SIZE=`WORD_SIZE) (
@@ -30,17 +30,22 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
     logic [WORD_SIZE-1:0] mem_reg [`MEM_DEPTH];
 
     //FSM
-    logic [1:0] current_state, next_state;
+    logic [2:0] current_state, next_state;
 
     //Counter
-    logic [4:0] count;
-    logic count_en;
+    logic [6:0] count;
+    logic en;
 
     //Aux Signal/Registers
     logic [WORD_SIZE-1:0] k0, k1, k2, k3; //Key
     logic [WORD_SIZE-1:0] v0, v1; //Word
-    logic [31:0] sum_enc, sum_dec;
+    logic [WORD_SIZE-1:0] o_v0, o_v1;
+    logic [1:0]           enc;
+    logic                 load;
+    logic                 sel;
 
+    //Sum Encode/Decode Counter
+    logic [31:0] sum_enc, sum_dec;
 
     //Registers Access
     always @(posedge i_clk) begin
@@ -72,7 +77,7 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
             count <= 0;
         end
         else begin
-            if(count_en == 'h1) begin
+            if(en == 'h1) begin
                 count <= count + 1;
             end
             else begin 
@@ -81,57 +86,125 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
         end
     end
 
+    //Sum Encode/Decode Counter
+    always@ (posedge i_clk) begin 
+        if(~i_rstn) begin
+            sum_enc <= 'h9E3779B9;
+            sum_dec <= 'hC6EF3720;
+        end
+        else begin
+            if(en == 'h1) begin
+                if(sel == 'h01) begin
+                    sum_enc <= sum_enc + DELTA;
+                    sum_dec <= sum_dec - DELTA;
+                end
+                else begin
+                    sum_enc <= sum_enc;
+                    sum_dec <= sum_dec;
+                end
+            end
+            else begin 
+                sum_enc <= 'h9E3779B9;
+                sum_dec <= 'hC6EF3720;
+            end
+        end
+    end
+
     //FSM - Combinational
     always@ (*) begin
         
+        k0 = mem_reg['h02];
+        k1 = mem_reg['h03];
+        k2 = mem_reg['h04];
+        k3 = mem_reg['h05];
+
         case (current_state)
             `IDLE: begin 
                 o_ready = 1;
-                count_en = 0;
-                sum_enc = 0;
-                sum_dec = 'hC6EF3720;
+                en = 0;
                 //Assign the values to the aux registers
-                v0 = mem_reg['h0];
-                v1 = mem_reg['h1];
-                k0 = mem_reg['h02];
-                k1 = mem_reg['h03];
-                k2 = mem_reg['h04];
-                k3 = mem_reg['h05];
+                //v0 = mem_reg['h0];
+                //v1 = mem_reg['h1];
+                enc = 'h00;
+                load = 'h01;
+                sel  = 'h00;
 
                 case (mem_reg['h06])
-                    `CTRL_ENC : next_state = `ENC;
-                    `CTRL_DEC : next_state = `DEC;
+                    `CTRL_ENC : next_state = `ENC_PT1;
+                    `CTRL_DEC : next_state = `DEC_PT1;
                     default   : next_state = `IDLE;
                 endcase
             end
 
-            `ENC: begin 
+            `ENC_PT1: begin 
                 o_ready = 0;
-                count_en = 1;
-                sum_enc += DELTA;
-                v0 += ((v1<<4) + k0) ^ (v1 + sum_enc) ^ ((v1>>5) + k1);
-                v1 += ((v0<<4) + k2) ^ (v0 + sum_enc) ^ ((v0>>5) + k3);
+                en = 1;
+                enc = 'h01;
+                load = 'h00;
+                sel  = 'h00;
+                //v0 += ((v1<<4) + k0) ^ (v1 + sum_enc) ^ ((v1>>5) + k1);
+                //v1 += ((v0<<4) + k2) ^ (v0 + sum_enc) ^ ((v0>>5) + k3);
                 
-                if(count >= 'h1F) next_state = `READY;
-                else next_state = `ENC;
+                if(count == 'h40) next_state = `READY;
+                else next_state = `ENC_PT2;
             end
 
-            `DEC: begin 
+            `ENC_PT2: begin 
                 o_ready = 0;
-                count_en = 1;
-                v1 -= ((v0<<4) + k2) ^ (v0 + sum_dec) ^ ((v0>>5) + k3);
-                v0 -= ((v1<<4) + k0) ^ (v1 + sum_dec) ^ ((v1>>5) + k1);
-                sum_dec -= DELTA;
-                if(count >= 'h1F) next_state = `READY;
-                else next_state = `DEC;
+                en = 1;
+                enc = 'h01;
+                load = 'h00;
+                sel  = 'h01;
+                //v0 += ((v1<<4) + k0) ^ (v1 + sum_enc) ^ ((v1>>5) + k1);
+                //v1 += ((v0<<4) + k2) ^ (v0 + sum_enc) ^ ((v0>>5) + k3);
+                
+                if(count == 'h40) next_state = `READY;
+                else next_state = `ENC_PT1;
+            end
+
+            `DEC_PT1: begin 
+                o_ready = 0;
+                en = 1;
+                enc = 'h02;
+                load = 'h00;
+                sel  = 'h01;
+                //v1 -= ((v0<<4) + k2) ^ (v0 + sum_dec) ^ ((v0>>5) + k3);
+                //v0 -= ((v1<<4) + k0) ^ (v1 + sum_dec) ^ ((v1>>5) + k1);
+                if(count == 'h40) next_state = `READY;
+                else next_state = `DEC_PT2;
+            end
+
+            `DEC_PT2: begin 
+                o_ready = 0;
+                en = 1;
+                enc = 'h02;
+                load = 'h00;
+                sel  = 'h00;
+                //v1 -= ((v0<<4) + k2) ^ (v0 + sum_dec) ^ ((v0>>5) + k3);
+                //v0 -= ((v1<<4) + k0) ^ (v1 + sum_dec) ^ ((v1>>5) + k1);
+                if(count == 'h40) next_state = `READY;
+                else next_state = `DEC_PT1;
             end
 
             `READY: begin 
                 o_ready = 1;
+                en = 0;
+                //v0 = 'h00;
+                //v1 = 'h00;
+                enc = 'h00;
+                load ='h00;
+                sel  = 'h00;
                 next_state = `IDLE;
             end
 
-            default : next_state = `IDLE;
+            default :  begin 
+                o_ready = 1;
+                en = 0;
+                enc = 'h00;
+                load ='h00;
+                sel  = 'h00;
+                next_state = `IDLE;
+            end
         endcase
 
     end
@@ -145,6 +218,53 @@ module tea #(parameter WORD_SIZE=`WORD_SIZE) (
         end
     end
 
+
+    always @(posedge i_clk) begin
+        if(~i_rstn) begin
+            v0 <= 'h00;
+            v1 <= 'h00;
+        end else begin
+            if (load) begin
+                v0 <= mem_reg['h0];
+                v1 <= mem_reg['h1];
+            end
+            else begin
+                if(sel == 'h00) begin
+                    v0 <= o_v0;
+                end
+                else begin
+                    v1 <= o_v1;
+                end
+            end
+        end
+    end
+
+    always@(*) begin 
+        if(enc == 'h01) begin
+            if(sel == 'h00) begin
+                o_v0 = v0+(((v1<<4) + k0) ^ (v1 + sum_enc) ^ ((v1>>5) + k1));
+                o_v1 = v1;
+            end
+            else begin
+                o_v1 = v1+(((v0<<4) + k2) ^ (v0 + sum_enc) ^ ((v0>>5) + k3));
+                o_v0 = v0;
+            end
+        end
+        else if (enc == 'h02) begin 
+            if(sel == 'h01) begin
+                o_v1 = v1-(((v0<<4) + k2) ^ (v0 + sum_dec) ^ ((v0>>5) + k3));
+                o_v0 = v0;
+            end
+            else begin 
+                o_v0 = v0-(((v1<<4) + k0) ^ (v1 + sum_dec) ^ ((v1>>5) + k1));
+                o_v1 = v1;
+            end
+        end
+        else begin 
+            o_v1 = 'h00;
+            o_v0 = 'h00;
+        end
+    end
 
 
 

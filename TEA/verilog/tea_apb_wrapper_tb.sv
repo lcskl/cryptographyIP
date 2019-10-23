@@ -107,7 +107,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         PENABLE = 1;
         @(posedge PCLK);
         PENABLE = 0;
-        #(34*CLK_P);
+        #(70*CLK_P);
         
         //Read
         //PT1
@@ -210,7 +210,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         PENABLE = 1;
         @(posedge PCLK);
         PENABLE = 0;
-        #(34*CLK_P);
+        #(70*CLK_P);
         
         //Read
         //PT1
