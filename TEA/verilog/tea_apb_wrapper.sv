@@ -26,9 +26,11 @@ module tea_apb_wrapper  #(parameter WORD_SIZE=`WORD_SIZE) (
     //Aux Signals
     logic we; //Write Enable
     logic [3:0] addr; //Address
+    logic [1:0] enc_dec;
 
     assign PSLVERR = 0;
     assign we = PSEL & PENABLE & PWRITE;
+    assign enc_dec = (PSEL & PENABLE & PWRITE & PADDR == 'h18) ? PWDATA[1:0] : 'h00;
     assign addr = PADDR >> 2;
 
     tea TEA (
@@ -37,6 +39,7 @@ module tea_apb_wrapper  #(parameter WORD_SIZE=`WORD_SIZE) (
         .i_data(PWDATA),
         .i_addr(addr),
         .i_we(we),
+        .i_enc_dec(enc_dec),
         .i_rstn(PRESETn),
         .i_clk(PCLK)
     );

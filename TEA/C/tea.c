@@ -44,7 +44,7 @@ void decrypt (uint32_t v[2], uint32_t k[4], uint32_t * dec_v) {
 int main(int argc, char const *argv[])
 {
     uint32_t key [4] = {1,2,3,4};
-    uint32_t word [2] = {0xBEBACAFE, 0xDEADBEAF};
+    uint32_t word [2] = {0xBEBACAFE, 0xDEADBEEF};
     uint32_t enc_word [2] = {0, 0};
     uint32_t dec_word [2] = {0, 0};
 

@@ -18,7 +18,7 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
 
     tea_apb_wrapper dut (.*);
 
-    logic [WORD_SIZE-1:0] data_out_pt1, data_out_pt2;
+    logic [WORD_SIZE-1:0] data_out_pt1, data_out_pt2, control_out;
 
     initial begin 
         PCLK  = 0;
@@ -107,9 +107,22 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         PENABLE = 1;
         @(posedge PCLK);
         PENABLE = 0;
+        #(1*CLK_P);
+        PWRITE = 0;
+        PADDR = 0;
         #(70*CLK_P);
         
         //Read
+        //Control
+        @(negedge PCLK);
+        PADDR = 24;
+        PSEL   = 1;
+        PWRITE = 0;
+        @(posedge PCLK);
+        PENABLE = 1;
+        @(posedge PCLK);
+        PENABLE = 0;
+        control_out = PRDATA;
         //PT1
         @(negedge PCLK);
         PADDR = 28;
@@ -210,9 +223,22 @@ module tea_apb_wrapper_tb #(parameter WORD_SIZE=`WORD_SIZE)();
         PENABLE = 1;
         @(posedge PCLK);
         PENABLE = 0;
+        #(1*CLK_P);
+        PWRITE = 0;
+        PADDR = 0;
         #(70*CLK_P);
         
         //Read
+        //Control
+        @(negedge PCLK);
+        PADDR = 24;
+        PSEL   = 1;
+        PWRITE = 0;
+        @(posedge PCLK);
+        PENABLE = 1;
+        @(posedge PCLK);
+        PENABLE = 0;
+        control_out = PRDATA;
         //PT1
         @(negedge PCLK);
         PADDR = 28;
